@@ -5,10 +5,12 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:flutter_message_channels/json/platform_info_json.dart';
 import 'package:flutter_message_channels/json/request_json.dart';
+import 'package:flutter_message_channels/pigeon/generated_message.dart';
 import 'package:flutter_message_channels/proto/platform_info.pbserver.dart';
 import 'package:flutter_message_channels/proto/request.pb.dart';
 
 export 'json/platform_info_json.dart';
+export 'pigeon/generated_message.dart';
 export 'proto/platform_info.pb.dart';
 
 class FlutterMessageChannels {
@@ -50,5 +52,12 @@ class FlutterMessageChannels {
       throw PlatformException(code: 'proto-decode-failed');
     }
     return PlatformInfoProto.fromBuffer(Uint8List.sublistView(byteData));
+  }
+
+  static Future<PlatformInfoPigeon> get platformInfoPigeon async {
+    final req = RequestPigeon()..param = 'pigeon';
+    final api = PigeonHostApi();
+    final info = await api.getPlatformInfo(req);
+    return info;
   }
 }

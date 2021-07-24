@@ -17,6 +17,7 @@ class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   String _platformVersionJson = 'Unknown';
   String _platformVersionProto = 'Unknown';
+  String _platformVersionPigeon = 'Unknown';
 
   @override
   void initState() {
@@ -29,6 +30,8 @@ class _MyAppState extends State<MyApp> {
     String platformVersion;
     String platformVersionJson;
     String platformVersionProto;
+    String platformVersionPigeon;
+
     // Platform messages may fail, so we use a try/catch PlatformException.
     // We also handle the message potentially returning null.
     try {
@@ -54,6 +57,14 @@ class _MyAppState extends State<MyApp> {
       platformVersionProto = 'Failed to get platform version via proto.';
     }
 
+    try {
+      final PlatformInfoPigeon infoPigeon =
+          await FlutterMessageChannels.platformInfoPigeon;
+      platformVersionPigeon = infoPigeon.version ?? 'Unknown platform version';
+    } on PlatformException {
+      platformVersionPigeon = 'Failed to get platform version via pigeon.';
+    }
+
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
@@ -63,6 +74,7 @@ class _MyAppState extends State<MyApp> {
       _platformVersion = platformVersion;
       _platformVersionJson = platformVersionJson;
       _platformVersionProto = platformVersionProto;
+      _platformVersionPigeon = platformVersionPigeon;
     });
   }
 
@@ -88,6 +100,10 @@ class _MyAppState extends State<MyApp> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               child: Text('Running on: $_platformVersionProto'),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: Text('Running on: $_platformVersionPigeon'),
             ),
           ],
         ),

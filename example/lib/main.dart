@@ -16,6 +16,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   String _platformVersionJson = 'Unknown';
+  String _platformVersionProto = 'Unknown';
 
   @override
   void initState() {
@@ -27,6 +28,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     String platformVersion;
     String platformVersionJson;
+    String platformVersionProto;
     // Platform messages may fail, so we use a try/catch PlatformException.
     // We also handle the message potentially returning null.
     try {
@@ -44,6 +46,14 @@ class _MyAppState extends State<MyApp> {
       platformVersionJson = 'Failed to get platform version via JSON.';
     }
 
+    try {
+      final PlatformInfoProto? infoProto =
+          await FlutterMessageChannels.platformInfoProto;
+      platformVersionProto = infoProto?.version ?? 'Unknown platform version';
+    } on PlatformException {
+      platformVersionProto = 'Failed to get platform version via proto.';
+    }
+
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
@@ -52,6 +62,7 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _platformVersion = platformVersion;
       _platformVersionJson = platformVersionJson;
+      _platformVersionProto = platformVersionProto;
     });
   }
 
@@ -67,12 +78,16 @@ class _MyAppState extends State<MyApp> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               child: Text('Running on: $_platformVersion'),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               child: Text('Running on: $_platformVersionJson'),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: Text('Running on: $_platformVersionProto'),
             ),
           ],
         ),

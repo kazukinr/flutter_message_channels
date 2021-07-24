@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+option java_package = "com.github.kazukinr.flutter_message_channels.proto";
+
+message PlatformInfoProto {
+  string version = 1;
+}
